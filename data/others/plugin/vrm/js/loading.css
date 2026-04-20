@@ -1,0 +1,48 @@
+@charset "UTF-8";
+/* loading用CSS */
+
+#loading_circle,
+#loading_circle:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+#loading_circle {
+  margin: 26.7% 41.5%;
+  font-size: 3px;
+  position: absolute;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.5);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.5);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.5);
+  border-left: 1.1em solid #fff;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: loading_circle_anim 1.6s infinite linear;
+  animation: loading_circle_anim 1.6s infinite linear;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+
+@-webkit-keyframes loading_circle_anim {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading_circle_anim {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

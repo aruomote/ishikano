@@ -1,0 +1,686 @@
+{
+  "defaultModelPath": "data/others/vrm/models/heroine1.vrm",
+  "defaultHeroineId": "heroine1",
+  "heroineModels": {
+    "heroine1": "data/others/vrm/models/heroine1.vrm",
+    "yukino": "data/others/vrm/models/yukino.vrm",
+    "suzu": "data/others/vrm/models/suzu.vrm",
+    "ayane": "data/others/vrm/models/ayane.vrm",
+    "shiori": "data/others/vrm/models/shiori.vrm",
+    "riko": "data/others/vrm/models/riko.vrm",
+    "rinka": "data/others/vrm/models/rinka.vrm",
+    "test_heroine": "data/others/vrm/models/test_heroine.vrm"
+  },
+  "heroinePluginModels": {
+    "heroine1": "heroine1.vrm",
+    "yukino": "yukino.vrm",
+    "suzu": "suzu.vrm",
+    "ayane": "ayane.vrm",
+    "shiori": "shiori.vrm",
+    "riko": "riko.vrm",
+    "rinka": "rinka.vrm",
+    "test_heroine": "test_heroine.vrm"
+  },
+  "heroineStoneModels": {
+    "heroine1": "data/others/vrm/models/heroine1_stone.vrm",
+    "yukino": "data/others/vrm/models/yukino_stone.vrm",
+    "suzu": "data/others/vrm/models/suzu_stone.vrm",
+    "ayane": "data/others/vrm/models/ayane_stone.vrm",
+    "shiori": "data/others/vrm/models/shiori_stone.vrm",
+    "riko": "data/others/vrm/models/riko_stone.vrm",
+    "rinka": "data/others/vrm/models/rinka_stone.vrm",
+    "test_heroine": "data/others/vrm/models/test_heroine_stone.vrm"
+  },
+  "heroineStonePluginModels": {
+    "heroine1": "heroine1_stone.vrm",
+    "yukino": "yukino_stone.vrm",
+    "suzu": "suzu_stone.vrm",
+    "ayane": "ayane_stone.vrm",
+    "shiori": "shiori_stone.vrm",
+    "riko": "riko_stone.vrm",
+    "rinka": "rinka_stone.vrm",
+    "test_heroine": "test_heroine_stone.vrm"
+  },
+  "outline": {
+    "normal": {
+      "enabled": true
+    },
+    "stone": {
+      "enabled": true
+    }
+  },
+  "heroineProfiles": {
+    "heroine1": {
+      "label": "柊 陽菜",
+      "models": {
+        "normalPath": "data/others/vrm/models/heroine1.vrm",
+        "pluginStorage": "heroine1.vrm",
+        "stonePath": "data/others/vrm/models/heroine1_stone.vrm",
+        "stonePluginStorage": "heroine1_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.14,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 0
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_cheerful",
+          "library_showcase"
+        ],
+        "poses": [],
+        "poseRemovals": [
+          "pose_small_fist_cheer",
+          "pose_arm_up_lively",
+          "pose_hands_up_cheer",
+          "pose_one_arm_boost",
+          "pose_bold_arc",
+          "pose_side_stretch",
+          "pose_folded_arms_cool",
+          "pose_salute_up",
+          "pose_hand_hip_bold",
+          "pose_confident_stand",
+          "pose_double_peace"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+        ],
+        "expressionRemovals": [
+          "angry_soft",
+          "startled",
+          "pout_soft",
+          "mouth_open_aa",
+          "mouth_round_ou",
+          "wink_left",
+          "wink_right",
+          "mouth_wide_ee"
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      },
+      "plugin": {
+        "poseMap": {
+          "pose_bold_arc": "pose1125",
+          "pose_cheer_up": "pose1062",
+          "pose_cute_double_fists": "pose2005",
+          "pose_double_peace": "pose2024",
+          "pose_hair_touch": "pose1043",
+          "pose_hand_chest": "pose1030",
+          "pose_low_angle_guard": "pose1031",
+          "pose_side_point": "pose1080",
+          "pose_side_present": "pose1259",
+          "pose_stand_soft": "pose1001",
+          "pose_turn_half": "pose1012"
+        },
+        "expressionMap": {
+          "angry_soft": "angry",
+          "cool": "neutral",
+          "embarrassed": "relaxed",
+          "sad_soft": "sad",
+          "smile_soft": "happy",
+          "surprised": "surprised",
+          "wink_left": "blinkLeft",
+          "wink_right": "blinkRight"
+        },
+        "lookMap": {
+          "camera": {
+            "mode": "camera"
+          },
+          "slight_away": {
+            "mode": "lookAt",
+            "x": 0.18,
+            "y": 0.03,
+            "targetType": "camera"
+          },
+          "away": {
+            "mode": "lookAt",
+            "x": 0.52,
+            "y": 0.08,
+            "targetType": "camera"
+          }
+        }
+      }
+    },
+    "yukino": {
+      "label": "朝倉 雪乃",
+      "models": {
+        "normalPath": "data/others/vrm/models/yukino.vrm",
+        "pluginStorage": "yukino.vrm",
+        "stonePath": "data/others/vrm/models/yukino_stone.vrm",
+        "stonePluginStorage": "yukino_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.22,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 23
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_showcase"
+        ],
+        "poses": [
+          "pose_present_arm_up",
+          "pose_bold_arc",
+          "pose_side_stretch",
+          "pose_folded_arms_cool",
+          "pose_salute_up",
+          "pose_side_present",
+          "pose_hand_hip_bold",
+          "pose_confident_stand"
+        ],
+        "poseRemovals": [
+          "pose_hands_behind_soft",
+          "pose_hands_up_cheer",
+          "pose_double_peace",
+          "pose_cheek_touch_shy",
+          "pose_bowed_shy",
+          "pose_hands_near_head",
+          "pose_cute_double_fists",
+          "pose_peace_near_face"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+        ],
+        "expressionRemovals": [
+          "wink_left",
+          "wink_right",
+          "eyes_closed_smile",
+          "mouth_open_aa",
+          "smile_open_soft",
+          "mouth_round_ou",
+          "mouth_round_oh",
+          "pout_soft",
+          "sad_soft",
+          "startled",
+          "mouth_wide_ee"
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      }
+    },
+    "suzu": {
+      "label": "小鳥遊 すず",
+      "models": {
+        "normalPath": "data/others/vrm/models/suzu.vrm",
+        "pluginStorage": "suzu.vrm",
+        "stonePath": "data/others/vrm/models/suzu_stone.vrm",
+        "stonePluginStorage": "suzu_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.22,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 15
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_cheerful"
+        ],
+        "poses": [
+          "pose_open_hands_bright",
+          "pose_light_step",
+          "pose_hands_up_cheer",
+          "pose_hands_near_head",
+          "pose_cute_double_fists",
+          "pose_peace_near_face"
+        ],
+        "poseRemovals": [
+          "pose_folded_arms_cool",
+          "pose_confident_stand"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+        ],
+        "expressionRemovals": [
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      }
+    },
+    "ayane": {
+      "label": "七瀬 彩音",
+      "models": {
+        "normalPath": "data/others/vrm/models/ayane.vrm",
+        "pluginStorage": "ayane.vrm",
+        "stonePath": "data/others/vrm/models/ayane_stone.vrm",
+        "stonePluginStorage": "ayane_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.16,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 12
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard"
+        ],
+        "poses": [
+          "pose_open_arm_invite",
+          "pose_small_fist_cheer",
+          "pose_arm_up_lively",
+          "pose_cheer_up",
+          "pose_sway_bright",
+          "pose_open_hands_bright",
+          "pose_reach_forward",
+          "pose_side_point",
+          "pose_light_step",
+          "pose_hands_up_cheer",
+          "pose_big_arm_present",
+          "pose_one_arm_boost",
+          "pose_double_peace"
+        ],
+        "poseRemovals": [
+          "pose_polite_front",
+          "pose_bowed_shy"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+        ],
+        "expressionRemovals": [
+          "smile_closed_soft",
+          "sad_soft"
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      }
+    },
+    "shiori": {
+      "label": "白石 詩織",
+      "models": {
+        "normalPath": "data/others/vrm/models/shiori.vrm",
+        "pluginStorage": "shiori.vrm",
+        "stonePath": "data/others/vrm/models/shiori_stone.vrm",
+        "stonePluginStorage": "shiori_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "slight_away",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.22,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 10
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_showcase"
+        ],
+        "poses": [
+          "pose_thinking_lips",
+          "pose_folded_hands_soft",
+          "pose_collar_touch",
+          "pose_bowed_shy",
+          "pose_polite_front",
+          "pose_hair_touch"
+        ],
+        "poseRemovals": [
+          "pose_hand_hip_soft",
+          "pose_open_hands_bright",
+          "pose_hands_up_cheer",
+          "pose_double_peace",
+          "pose_one_arm_boost",
+          "pose_hands_near_head",
+          "pose_present_arm_up",
+          "pose_bold_arc",
+          "pose_side_stretch",
+          "pose_folded_arms_cool",
+          "pose_salute_up",
+          "pose_side_present",
+          "pose_hand_hip_bold",
+          "pose_confident_stand",
+          "pose_cute_double_fists",
+          "pose_peace_near_face"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+          "eyes_closed"
+        ],
+        "expressionRemovals": [
+          "angry_soft",
+          "startled",
+          "smile_bright",
+          "pout_soft",
+          "wink_left",
+          "wink_right",
+          "mouth_open_aa",
+          "smile_open_soft",
+          "mouth_wide_ee"
+        ],
+        "looks": [
+          "slight_away",
+          "camera",
+          "away"
+        ]
+      }
+    },
+    "riko": {
+      "label": "鷹宮 莉子",
+      "models": {
+        "normalPath": "data/others/vrm/models/riko.vrm",
+        "pluginStorage": "riko.vrm",
+        "stonePath": "data/others/vrm/models/riko_stone.vrm",
+        "stonePluginStorage": "riko_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.2,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 14
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_showcase"
+        ],
+        "poses": [
+          "pose_present_arm_up",
+          "pose_bold_arc",
+          "pose_side_stretch",
+          "pose_folded_arms_cool",
+          "pose_side_present",
+          "pose_hand_hip_bold",
+          "pose_confident_stand"
+        ],
+        "poseRemovals": [
+          "pose_hands_behind_soft",
+          "pose_hands_near_head",
+          "pose_double_peace",
+          "pose_cheek_touch_shy",
+          "pose_hair_touch",
+          "pose_one_arm_boost",
+          "pose_cute_double_fists",
+          "pose_peace_near_face"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+          "eyes_closed"
+        ],
+        "expressionRemovals": [
+          "angry_soft",
+          "startled",
+          "wink_left",
+          "wink_right",
+          "pout_soft",
+          "mouth_open_aa",
+          "mouth_round_ou",
+          "mouth_round_oh",
+          "smile_bright",
+          "eyes_closed_smile",
+          "smile_open_soft",
+          "mouth_wide_ee"
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      }
+    },
+    "rinka": {
+      "label": "柊 凛花",
+      "models": {
+        "normalPath": "data/others/vrm/models/rinka.vrm",
+        "pluginStorage": "rinka.vrm",
+        "stonePath": "data/others/vrm/models/rinka_stone.vrm",
+        "stonePluginStorage": "rinka_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "away",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.22,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": 9
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_cheerful"
+        ],
+        "poses": [
+          "pose_thinking_lips",
+          "pose_hands_near_head",
+          "pose_peace_near_face"
+        ],
+        "poseRemovals": [
+          "pose_hands_behind_soft",
+          "pose_polite_front",
+          "pose_open_arm_invite",
+          "pose_arm_up_lively",
+          "pose_cheer_up",
+          "pose_big_arm_present",
+          "pose_side_stretch",
+          "pose_folded_arms_cool",
+          "pose_confident_stand"
+        ],
+        "expressionBundles": [
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+          "smile_bright",
+          "embarrassed",
+          "cool"
+        ],
+        "expressionRemovals": [
+          "angry_soft",
+          "sad_soft"
+        ],
+        "looks": [
+          "away",
+          "slight_away",
+          "camera"
+        ]
+      }
+    },
+    "test_heroine": {
+      "label": "Test Heroine",
+      "models": {
+        "normalPath": "data/others/vrm/models/test_heroine.vrm",
+        "pluginStorage": "test_heroine.vrm",
+        "stonePath": "data/others/vrm/models/test_heroine_stone.vrm",
+        "stonePluginStorage": "test_heroine_stone.vrm"
+      },
+      "defaults": {
+        "poseId": "pose_stand_soft",
+        "expressionId": "cool",
+        "lookAtId": "camera",
+        "stoneState": "normal",
+        "locationId": "club_room",
+        "themeId": "graceful_portrait",
+        "camera": {
+          "distance": 1.2,
+          "orbitYaw": 0,
+          "orbitPitch": 0,
+          "panX": 0,
+          "panY": -10
+        }
+      },
+      "options": {
+        "poseBundles": [
+          "library_standard",
+          "library_cheerful",
+          "library_showcase"
+        ],
+        "poses": [
+          "pose_stand_soft",
+          "pose_turn_half",
+          "pose_hand_chest",
+          "pose_hair_touch",
+          "pose_cheer_up",
+          "pose_side_point",
+          "pose_bold_arc",
+          "pose_cute_double_fists",
+          "pose_double_peace",
+          "pose_side_present"
+        ],
+        "expressionBundles": [
+          "face_base",
+          "face_emotion",
+          "face_playful",
+          "face_mouth"
+        ],
+        "expressions": [
+        ],
+        "expressionRemovals": [
+        ],
+        "looks": [
+          "camera",
+          "slight_away",
+          "away"
+        ]
+      },
+      "plugin": {
+        "poseMap": {
+          "pose_bold_arc": "pose1125",
+          "pose_cheer_up": "pose1062",
+          "pose_cute_double_fists": "pose2005",
+          "pose_double_peace": "pose2024",
+          "pose_hair_touch": "pose1043",
+          "pose_hand_chest": "pose1030",
+          "pose_low_angle_guard": "pose1031",
+          "pose_side_point": "pose1080",
+          "pose_side_present": "pose1259",
+          "pose_stand_soft": "pose1001",
+          "pose_turn_half": "pose1012"
+        },
+        "expressionMap": {
+          "angry_soft": "angry",
+          "cool": "neutral",
+          "embarrassed": "relaxed",
+          "sad_soft": "sad",
+          "smile_soft": "happy",
+          "surprised": "surprised",
+          "wink_left": "blinkLeft",
+          "wink_right": "blinkRight"
+        },
+        "lookMap": {
+          "camera": {
+            "mode": "camera"
+          },
+          "slight_away": {
+            "mode": "lookAt",
+            "x": 0.18,
+            "y": 0.03,
+            "targetType": "camera"
+          },
+          "away": {
+            "mode": "lookAt",
+            "x": 0.52,
+            "y": 0.08,
+            "targetType": "camera"
+          }
+        }
+      }
+    }
+  },
+  "pluginExpectedFolder": "data/others/plugin/"
+}

@@ -1,0 +1,8 @@
+{
+  "blinkLeft": {"set": "blinkRight", "invalid":""},
+  "blinkRight": {"set": "blinkLeft", "invalid":""},
+  "happy": {"set": "happy", "invalid":""},
+  "bs_face.eye_Calm": {"set": "bs_face.eye_Calm", "invalid":""},
+  "bs_face.eye_none": {"set": "", "invalid":""},
+  "bs_face.eye_surprised": {"set": "blink", "invalid":"bs_face.eye_surprised"}
+}

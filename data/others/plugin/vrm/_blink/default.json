@@ -1,0 +1,5 @@
+{
+  "blinkLeft": {"set": "blinkRight", "invalid":""},
+  "blinkRight": {"set": "blinkLeft", "invalid":""},
+  "happy": {"set": "happy", "invalid":""}
+}

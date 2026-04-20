@@ -1,0 +1,88 @@
+{
+  "heroine_id_here": {
+    "label": "Heroine Name",
+    "models": {
+      "normalPath": "data/others/vrm/models/heroine_id_here.vrm",
+      "pluginStorage": "heroine_id_here.vrm",
+      "stonePath": "data/others/vrm/models/heroine_id_here_stone.vrm",
+      "stonePluginStorage": "heroine_id_here_stone.vrm"
+    },
+    "defaults": {
+      "poseId": "pose_stand_soft",
+      "expressionId": "cool",
+      "lookAtId": "camera",
+      "stoneState": "normal",
+      "locationId": "club_room",
+      "themeId": "graceful_portrait",
+      "camera": {
+        "distance": 1.2,
+        "orbitYaw": 0,
+        "orbitPitch": 0,
+        "panX": 0,
+        "panY": -10
+      },
+      "framing": {
+        "eyeLineScreenY": 0.4,
+        "headroom": 0.1,
+        "distanceOffset": 0,
+        "eyeLineOffsetY": 0
+      }
+    },
+    "options": {
+      "poseBundles": [
+        "library_standard"
+      ],
+      "poses": [
+        "pose_hand_chest",
+        "pose_hair_touch"
+      ],
+      "poseRemovals": [
+        "pose_hands_behind_soft"
+      ],
+      "expressionBundles": [
+        "face_base",
+        "face_emotion"
+      ],
+      "expressions": [
+        "eyes_closed"
+      ],
+      "expressionRemovals": [
+        "angry_soft"
+      ],
+      "looks": [
+        "camera",
+        "slight_away",
+        "away"
+      ]
+    },
+    "plugin": {
+      "poseMap": {
+        "pose_stand_soft": "pose1001",
+        "pose_turn_half": "pose1012",
+        "pose_hand_chest": "pose1030"
+      },
+      "expressionMap": {
+        "smile_soft": "happy",
+        "embarrassed": "relaxed",
+        "cool": "neutral"
+      },
+      "lookMap": {
+        "camera": {
+          "mode": "camera"
+        },
+        "slight_away": {
+          "mode": "lookAt",
+          "x": 0.18,
+          "y": 0.03,
+          "targetType": "camera"
+        },
+        "away": {
+          "mode": "lookAt",
+          "x": 0.52,
+          "y": 0.08,
+          "targetType": "camera"
+        }
+      }
+    }
+  }
+}

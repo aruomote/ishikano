@@ -1,0 +1,51 @@
+{
+  "0": {
+    "emo": "neutral",
+    "emoID": "",
+    "emoval": "1",
+    "time": "500",
+    "easing": "default",
+    "diff": "false"
+  },
+  "2000": {
+    "emo": "",
+    "emoID": "Fcl_EYE_Joy",
+    "emoval": "1",
+    "time": "500",
+    "easing": "default",
+    "diff": "false"
+  },
+  "2500": {
+    "emo": "aa",
+    "emoID": "",
+    "emoval": "0.8",
+    "time": "500",
+    "easing": "default",
+    "diff": "true"
+  },
+  "5000": {
+    "emo": "neutral",
+    "emoID": "",
+    "emoval": "1",
+    "time": "500",
+    "easing": "default",
+    "diff": "false"
+  },
+  "8000": {
+    "emo": "",
+    "emoID": "Fcl_EYE_Joy_L",
+    "emoval": "1",
+    "time": "500",
+    "easing": "default",
+    "diff": "false"
+  },
+  "10000": {
+    "emo": "neutral",
+    "emoID": "",
+    "emoval": "1",
+    "time": "500",
+    "easing": "default",
+    "diff": "false"
+  }
+
+}
