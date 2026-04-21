@@ -2979,7 +2979,7 @@
                     return "VRoidプラグインが見つかりません";
                 }
                 if (state.loading) {
-                    return "VRoidプラグインでモデルを初期化しています";
+                    return "モデルを読み込んでいます。しばらくお待ちください。";
                 }
                 if (state.loadError) {
                     return state.loadError;
@@ -2992,6 +2992,10 @@
                     return `VRoidプラグイン接続中: ${state.normalPluginStorage} / ${stoneNote}`;
                 }
                 return "VRoidプラグイン待機中";
+            },
+
+            isLoading() {
+                return Boolean(state.loading);
             },
 
             getModelPath() {
@@ -3030,6 +3034,10 @@
                 return "VRoidプラグインが必要です";
             },
 
+            isLoading() {
+                return false;
+            },
+
             getModelPath() {
                 return "";
             },
@@ -3052,6 +3060,42 @@
         return createUnavailableAdapter();
     }
 
+    function getGameViewportRect() {
+        const tyranoBase = document.getElementById("tyrano_base");
+        if (tyranoBase) {
+            const rect = tyranoBase.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                return rect;
+            }
+        }
+
+        return {
+            left: 0,
+            top: 0,
+            width: window.innerWidth || document.documentElement.clientWidth || 0,
+            height: window.innerHeight || document.documentElement.clientHeight || 0,
+        };
+    }
+
+    function syncRootToGameViewport(root) {
+        if (!root || !root.length) {
+            return;
+        }
+
+        const rect = getGameViewportRect();
+        root.css({
+            left: `${Math.round(rect.left)}px`,
+            top: `${Math.round(rect.top)}px`,
+            width: `${Math.round(rect.width)}px`,
+            height: `${Math.round(rect.height)}px`,
+        });
+        root
+            .toggleClass("is-compact-height", rect.height <= 260)
+            .toggleClass("is-ultra-compact-height", rect.height <= 210)
+            .toggleClass("is-narrow-width", rect.width <= 420)
+            .toggleClass("is-ultra-narrow-width", rect.width <= 340);
+    }
+
     function createRoot() {
         const root = $(`
             <div class="stone-photo-mvp hidden">
@@ -3059,6 +3103,13 @@
                     <div class="stone-photo-mvp__render-host"></div>
                     <div class="stone-photo-mvp__model">
                         <div class="stone-photo-mvp__silhouette"></div>
+                    </div>
+                    <div class="stone-photo-mvp__loading hidden" aria-live="polite" aria-atomic="true">
+                        <div class="stone-photo-mvp__loading-card">
+                            <div class="stone-photo-mvp__loading-spinner" aria-hidden="true"></div>
+                            <div class="stone-photo-mvp__loading-title">3Dモデルを読み込み中…</div>
+                            <div class="stone-photo-mvp__loading-text">モデルを読み込んでいます。しばらくお待ちください。</div>
+                        </div>
                     </div>
                     <div class="stone-photo-mvp__hud">
                         <div class="stone-photo-mvp__hud-top">
@@ -3166,6 +3217,7 @@
         `);
 
         $("body").append(root);
+        syncRootToGameViewport(root);
         return root;
     }
 
@@ -3195,6 +3247,8 @@
         hudHoldHidden: false,
         cameraGuideTimer: 0,
         helpHintTimer: 0,
+        rootFrameSyncTimer: 0,
+        trayDismissHandler: null,
         modelConfigLoadWarning: "",
         runtimeStatusMessage: "",
         runtimeStatusTone: "",
@@ -3274,11 +3328,28 @@
             return pageCount;
         },
 
+        syncRootFrame() {
+            syncRootToGameViewport(this.root);
+        },
+
+        scheduleRootFrameSync(shouldRender = false) {
+            clearTimeout(this.rootFrameSyncTimer);
+            this.syncRootFrame();
+            this.rootFrameSyncTimer = window.setTimeout(() => {
+                this.rootFrameSyncTimer = 0;
+                this.syncRootFrame();
+                if (shouldRender && this.root && !this.root.hasClass("hidden")) {
+                    this.render();
+                }
+            }, 450);
+        },
+
         ensureUi() {
             if (this.root) return;
             this.root = createRoot();
             this.bindUi();
             this.populateSelects();
+            this.scheduleRootFrameSync();
         },
 
         ensureModelConfig() {
@@ -3392,6 +3463,26 @@
             }
 
             return null;
+        },
+
+        isAdapterLoading() {
+            return Boolean(this.adapter && typeof this.adapter.isLoading === "function" && this.adapter.isLoading());
+        },
+
+        getLoadingOverlayText() {
+            if (this.awaitingContextRestore) {
+                return this.runtimeStatusMessage || "表示を復旧しています。しばらくお待ちください。";
+            }
+            if (this.isAdapterLoading()) {
+                return "モデルを読み込んでいます。しばらくお待ちください。";
+            }
+            if (this.adapter && typeof this.adapter.getStatusText === "function") {
+                const adapterStatus = this.adapter.getStatusText(this.state);
+                if (adapterStatus) {
+                    return adapterStatus;
+                }
+            }
+            return "モデルを読み込んでいます。しばらくお待ちください。";
         },
 
         hideGameUi() {
@@ -3607,6 +3698,32 @@
             const root = this.root;
             const self = this;
             const viewport = root.find(".stone-photo-mvp__viewport");
+
+            $(window).off("resize.stonePhotoHudFrame").on("resize.stonePhotoHudFrame", () => {
+                self.scheduleRootFrameSync(true);
+            });
+            const trayDismissEvents = ["pointerdown", "mousedown", "touchstart"];
+            if (this.trayDismissHandler) {
+                trayDismissEvents.forEach((eventName) => {
+                    document.removeEventListener(eventName, this.trayDismissHandler, true);
+                });
+            }
+            this.trayDismissHandler = (event) => {
+                if (!self.activeTray || !self.root || self.root.hasClass("hidden")) {
+                    return;
+                }
+                const target = $(event.target);
+                if (
+                    target.closest(".stone-photo-mvp__tray").length ||
+                    target.closest('[data-action="open-tray"]').length
+                ) {
+                    return;
+                }
+                self.closeTray();
+            };
+            trayDismissEvents.forEach((eventName) => {
+                document.addEventListener(eventName, this.trayDismissHandler, true);
+            });
 
             // --- Main actions ---
             root.on("click", '[data-action="back"]', () => this.cancel());
@@ -3860,10 +3977,12 @@
             viewport.on("touchend touchcancel", () => {
                 dragMode = "";
             });
+
         },
 
         open(params, done) {
             this.ensureUi();
+            this.scheduleRootFrameSync();
             this.adapter = ensureAdapter(() => this.render());
             this.clearAdapterRetry();
             this.stopRuntimeHealthCheck();
@@ -3897,6 +4016,7 @@
             this.hudPinnedHidden = false;
             this.hudHoldHidden = false;
             this.root.removeClass("hidden");
+            this.scheduleRootFrameSync(true);
             this.syncHudVisibility();
             this.root.removeClass("is-help-dimmed");
             this.root.find(".stone-photo-mvp__preview").addClass("hidden");
@@ -3971,6 +4091,7 @@
             this.hudPinnedHidden = false;
             this.hudHoldHidden = false;
             this.root.removeClass("hidden");
+            this.scheduleRootFrameSync(true);
             this.syncHudVisibility();
             this.root.addClass("is-help-dimmed");
             this.root.find(".stone-photo-mvp__preview").addClass("hidden");
@@ -4241,6 +4362,7 @@
 
         render() {
             if (!this.root) return;
+            this.syncRootFrame();
 
             if (
                 this.mode === "shoot" &&
@@ -4280,8 +4402,11 @@
             const mockModel = this.root.find(".stone-photo-mvp__model");
             const usesRealViewport = adapter && adapter.usesRealViewport ? adapter.usesRealViewport() : false;
             const hudStatus = this.getHudStatus();
+            const isLoading = this.isAdapterLoading();
+            const loadingText = this.getLoadingOverlayText();
 
             this.root.toggleClass("is-album-only", this.mode === "album");
+            this.root.toggleClass("has-open-tray", Boolean(this.activeTray));
             this.syncHudVisibility();
             viewport.toggleClass("is-stone", isStone);
             mockModel.toggleClass("is-hidden", usesRealViewport);
@@ -4302,6 +4427,9 @@
                 .toggleClass("is-warning", Boolean(hudStatus && hudStatus.tone === "warning"))
                 .toggleClass("is-error", Boolean(hudStatus && hudStatus.tone === "error"))
                 .text(hudStatus ? hudStatus.message : "");
+            const loadingNode = this.root.find(".stone-photo-mvp__loading");
+            loadingNode.toggleClass("hidden", !isLoading);
+            loadingNode.find(".stone-photo-mvp__loading-text").text(loadingText || "モデルを読み込んでいます。しばらくお待ちください。");
 
             // Main buttons
             const randomButton = this.root.find('[data-action="randomize-style"]');
