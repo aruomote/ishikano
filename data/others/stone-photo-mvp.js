@@ -3093,7 +3093,11 @@
             .toggleClass("is-compact-height", rect.height <= 260)
             .toggleClass("is-ultra-compact-height", rect.height <= 210)
             .toggleClass("is-narrow-width", rect.width <= 420)
-            .toggleClass("is-ultra-narrow-width", rect.width <= 340);
+            .toggleClass("is-ultra-narrow-width", rect.width <= 340)
+            .toggleClass(
+                "is-landscape-compact",
+                rect.width >= rect.height && rect.height <= 430 && rect.width <= 900
+            );
     }
 
     function createRoot() {

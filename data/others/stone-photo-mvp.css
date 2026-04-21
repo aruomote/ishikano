@@ -1549,3 +1549,154 @@
     padding: 9px 4px;
     font-size: 11px;
 }
+
+/* ============================================================
+   Landscape Mobile Viewport
+   ============================================================ */
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-top {
+    padding: 6px 12px 8px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-top-left {
+    gap: 8px 12px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__heroine-name {
+    font-size: 16px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__theme-name {
+    display: none;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-top-right {
+    gap: 8px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__state-badge {
+    padding: 5px 12px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__btn-ui-toggle {
+    width: 32px;
+    height: 32px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__status {
+    top: 42px;
+    left: 12px;
+    right: 12px;
+    padding: 6px 10px;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-sub {
+    top: 76px;
+    left: 12px;
+    gap: 6px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-sub .stone-photo-mvp__btn {
+    min-width: 82px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray {
+    top: 74px;
+    left: 108px;
+    bottom: 58px;
+    width: min(300px, calc(100% - 224px));
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-panel {
+    padding: 12px;
+    border-radius: 18px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-caption,
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-group-caption {
+    display: none;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-item {
+    padding: 10px 12px;
+    border-radius: 14px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-item-label {
+    font-size: 12px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__tray-item-state {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-bottom-left {
+    left: 12px;
+    bottom: 14px;
+    gap: 8px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-bottom-right {
+    right: 12px;
+    bottom: 14px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__btn-aux {
+    padding: 9px 14px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__hud-main {
+    left: 220px;
+    right: 104px;
+    bottom: 12px;
+    transform: none;
+    width: auto;
+    justify-content: center;
+    gap: 8px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__btn-random,
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__btn-stone,
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__btn-shutter {
+    min-width: 0;
+    padding: 12px 8px;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    flex: 1 1 0;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__camera-guide {
+    right: 12px;
+    max-width: 220px;
+    padding: 8px 10px;
+    font-size: 11px;
+}
+
+.stone-photo-mvp.is-landscape-compact .stone-photo-mvp__controls-help {
+    display: none;
+}
+
+.stone-photo-mvp.is-landscape-compact.has-open-tray .stone-photo-mvp__hud-main,
+.stone-photo-mvp.is-landscape-compact.has-open-tray .stone-photo-mvp__hud-bottom-left,
+.stone-photo-mvp.is-landscape-compact.has-open-tray .stone-photo-mvp__hud-bottom-right,
+.stone-photo-mvp.is-landscape-compact.has-open-tray .stone-photo-mvp__camera-guide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.stone-photo-mvp.is-landscape-compact.has-open-tray .stone-photo-mvp__tray {
+    left: 108px;
+    right: 12px;
+    width: auto;
+    bottom: 12px;
+}
