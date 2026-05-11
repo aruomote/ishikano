@@ -1,15 +1,15 @@
 {
-  "defaultModelPath": "data/others/vrm/models/heroine1.vrm",
+  "defaultModelPath": "data/others/plugin/vrm/model/heroine1.vrm",
   "defaultHeroineId": "heroine1",
   "heroineModels": {
-    "heroine1": "data/others/vrm/models/heroine1.vrm",
-    "yukino": "data/others/vrm/models/yukino.vrm",
-    "suzu": "data/others/vrm/models/suzu.vrm",
-    "ayane": "data/others/vrm/models/ayane.vrm",
-    "shiori": "data/others/vrm/models/shiori.vrm",
-    "riko": "data/others/vrm/models/riko.vrm",
-    "rinka": "data/others/vrm/models/rinka.vrm",
-    "test_heroine": "data/others/vrm/models/test_heroine.vrm"
+    "heroine1": "data/others/plugin/vrm/model/heroine1.vrm",
+    "yukino": "data/others/plugin/vrm/model/yukino.vrm",
+    "suzu": "data/others/plugin/vrm/model/suzu.vrm",
+    "ayane": "data/others/plugin/vrm/model/ayane.vrm",
+    "shiori": "data/others/plugin/vrm/model/shiori.vrm",
+    "riko": "data/others/plugin/vrm/model/riko.vrm",
+    "rinka": "data/others/plugin/vrm/model/rinka.vrm",
+    "test_heroine": "data/others/plugin/vrm/model/test_heroine.vrm"
   },
   "heroinePluginModels": {
     "heroine1": "heroine1.vrm",
@@ -22,14 +22,14 @@
     "test_heroine": "test_heroine.vrm"
   },
   "heroineStoneModels": {
-    "heroine1": "data/others/vrm/models/heroine1_stone.vrm",
-    "yukino": "data/others/vrm/models/yukino_stone.vrm",
-    "suzu": "data/others/vrm/models/suzu_stone.vrm",
-    "ayane": "data/others/vrm/models/ayane_stone.vrm",
-    "shiori": "data/others/vrm/models/shiori_stone.vrm",
-    "riko": "data/others/vrm/models/riko_stone.vrm",
-    "rinka": "data/others/vrm/models/rinka_stone.vrm",
-    "test_heroine": "data/others/vrm/models/test_heroine_stone.vrm"
+    "heroine1": "data/others/plugin/vrm/model/heroine1_stone.vrm",
+    "yukino": "data/others/plugin/vrm/model/yukino_stone.vrm",
+    "suzu": "data/others/plugin/vrm/model/suzu_stone.vrm",
+    "ayane": "data/others/plugin/vrm/model/ayane_stone.vrm",
+    "shiori": "data/others/plugin/vrm/model/shiori_stone.vrm",
+    "riko": "data/others/plugin/vrm/model/riko_stone.vrm",
+    "rinka": "data/others/plugin/vrm/model/rinka_stone.vrm",
+    "test_heroine": "data/others/plugin/vrm/model/test_heroine_stone.vrm"
   },
   "heroineStonePluginModels": {
     "heroine1": "heroine1_stone.vrm",
@@ -53,9 +53,9 @@
     "heroine1": {
       "label": "柊 陽菜",
       "models": {
-        "normalPath": "data/others/vrm/models/heroine1.vrm",
+        "normalPath": "data/others/plugin/vrm/model/heroine1.vrm",
         "pluginStorage": "heroine1.vrm",
-        "stonePath": "data/others/vrm/models/heroine1_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/heroine1_stone.vrm",
         "stonePluginStorage": "heroine1_stone.vrm"
       },
       "defaults": {
@@ -163,9 +163,9 @@
     "yukino": {
       "label": "朝倉 雪乃",
       "models": {
-        "normalPath": "data/others/vrm/models/yukino.vrm",
+        "normalPath": "data/others/plugin/vrm/model/yukino.vrm",
         "pluginStorage": "yukino.vrm",
-        "stonePath": "data/others/vrm/models/yukino_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/yukino_stone.vrm",
         "stonePluginStorage": "yukino_stone.vrm"
       },
       "defaults": {
@@ -239,9 +239,9 @@
     "suzu": {
       "label": "小鳥遊 すず",
       "models": {
-        "normalPath": "data/others/vrm/models/suzu.vrm",
+        "normalPath": "data/others/plugin/vrm/model/suzu.vrm",
         "pluginStorage": "suzu.vrm",
-        "stonePath": "data/others/vrm/models/suzu_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/suzu_stone.vrm",
         "stonePluginStorage": "suzu_stone.vrm"
       },
       "defaults": {
@@ -296,9 +296,9 @@
     "ayane": {
       "label": "七瀬 彩音",
       "models": {
-        "normalPath": "data/others/vrm/models/ayane.vrm",
+        "normalPath": "data/others/plugin/vrm/model/ayane.vrm",
         "pluginStorage": "ayane.vrm",
-        "stonePath": "data/others/vrm/models/ayane_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/ayane_stone.vrm",
         "stonePluginStorage": "ayane_stone.vrm"
       },
       "defaults": {
@@ -361,9 +361,9 @@
     "shiori": {
       "label": "白石 詩織",
       "models": {
-        "normalPath": "data/others/vrm/models/shiori.vrm",
+        "normalPath": "data/others/plugin/vrm/model/shiori.vrm",
         "pluginStorage": "shiori.vrm",
-        "stonePath": "data/others/vrm/models/shiori_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/shiori_stone.vrm",
         "stonePluginStorage": "shiori_stone.vrm"
       },
       "defaults": {
@@ -442,9 +442,9 @@
     "riko": {
       "label": "鷹宮 莉子",
       "models": {
-        "normalPath": "data/others/vrm/models/riko.vrm",
+        "normalPath": "data/others/plugin/vrm/model/riko.vrm",
         "pluginStorage": "riko.vrm",
-        "stonePath": "data/others/vrm/models/riko_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/riko_stone.vrm",
         "stonePluginStorage": "riko_stone.vrm"
       },
       "defaults": {
@@ -519,9 +519,9 @@
     "rinka": {
       "label": "柊 凛花",
       "models": {
-        "normalPath": "data/others/vrm/models/rinka.vrm",
+        "normalPath": "data/others/plugin/vrm/model/rinka.vrm",
         "pluginStorage": "rinka.vrm",
-        "stonePath": "data/others/vrm/models/rinka_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/rinka_stone.vrm",
         "stonePluginStorage": "rinka_stone.vrm"
       },
       "defaults": {
@@ -584,9 +584,9 @@
     "test_heroine": {
       "label": "Test Heroine",
       "models": {
-        "normalPath": "data/others/vrm/models/test_heroine.vrm",
+        "normalPath": "data/others/plugin/vrm/model/test_heroine.vrm",
         "pluginStorage": "test_heroine.vrm",
-        "stonePath": "data/others/vrm/models/test_heroine_stone.vrm",
+        "stonePath": "data/others/plugin/vrm/model/test_heroine_stone.vrm",
         "stonePluginStorage": "test_heroine_stone.vrm"
       },
       "defaults": {

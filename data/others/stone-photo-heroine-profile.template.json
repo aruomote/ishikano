@@ -2,9 +2,9 @@
   "heroine_id_here": {
     "label": "Heroine Name",
     "models": {
-      "normalPath": "data/others/vrm/models/heroine_id_here.vrm",
+      "normalPath": "data/others/plugin/vrm/model/heroine_id_here.vrm",
       "pluginStorage": "heroine_id_here.vrm",
-      "stonePath": "data/others/vrm/models/heroine_id_here_stone.vrm",
+      "stonePath": "data/others/plugin/vrm/model/heroine_id_here_stone.vrm",
       "stonePluginStorage": "heroine_id_here_stone.vrm"
     },
     "defaults": {

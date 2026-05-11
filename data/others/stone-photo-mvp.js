@@ -46,6 +46,10 @@
         distanceMin: 0.2,
         orbitPitchMax: 42,
         orbitPitchMin: -58,
+        panXMax: 80,
+        panXMin: -80,
+        panYMax: 70,
+        panYMin: -60,
     };
 
     const PLUGIN_LIGHTING = {
@@ -106,10 +110,10 @@
     };
 
     const DEFAULT_MODEL_CONFIG = {
-        defaultModelPath: "data/others/vrm/models/test_heroine.vrm",
+        defaultModelPath: "data/others/plugin/vrm/model/test_heroine.vrm",
         defaultHeroineId: "test_heroine",
         heroineModels: {
-            test_heroine: "data/others/vrm/models/test_heroine.vrm",
+            test_heroine: "data/others/plugin/vrm/model/test_heroine.vrm",
         },
         heroinePluginModels: {
             test_heroine: "test_heroine.vrm",
@@ -546,8 +550,16 @@
             CAMERA_LIMITS.distanceMin,
             CAMERA_LIMITS.distanceMax
         );
-        sessionState.camera.panX = toFiniteNumber(sessionState.camera.panX, DEFAULT_STATE.camera.panX);
-        sessionState.camera.panY = toFiniteNumber(sessionState.camera.panY, DEFAULT_STATE.camera.panY);
+        sessionState.camera.panX = clamp(
+            toFiniteNumber(sessionState.camera.panX, DEFAULT_STATE.camera.panX),
+            CAMERA_LIMITS.panXMin,
+            CAMERA_LIMITS.panXMax
+        );
+        sessionState.camera.panY = clamp(
+            toFiniteNumber(sessionState.camera.panY, DEFAULT_STATE.camera.panY),
+            CAMERA_LIMITS.panYMin,
+            CAMERA_LIMITS.panYMax
+        );
         return orbit;
     }
 
@@ -974,7 +986,24 @@
         return (profile && profile.label) || heroineId || DEFAULT_STATE.heroineId;
     }
 
-    function getHeroineOptionList(modelConfig, heroineId, groupName) {
+    function makeOptionItemFromValue(groupName, value) {
+        return findOptionItem(groupName, value) || (groupName === "poses" && POSE_ID_PATTERN.test(value) ? makeGenericPoseCatalogItem(value) : null);
+    }
+
+    function parseOptionFilterParam(rawValue) {
+        if (Array.isArray(rawValue)) {
+            return rawValue.map((value) => String(value || "").trim()).filter(Boolean);
+        }
+        if (typeof rawValue !== "string" || !rawValue.trim()) {
+            return [];
+        }
+        return rawValue
+            .split(",")
+            .map((value) => value.trim())
+            .filter(Boolean);
+    }
+
+    function getHeroineOptionList(modelConfig, heroineId, groupName, optionFilters) {
         const profile = getHeroineProfile(modelConfig, heroineId);
         const configuredValues =
             profile &&
@@ -988,11 +1017,30 @@
             return getDefaultOptionItems(groupName);
         }
 
-        const filtered = configuredValues
-            .map((value) => findOptionItem(groupName, value) || (groupName === "poses" && POSE_ID_PATTERN.test(value) ? makeGenericPoseCatalogItem(value) : null))
-            .filter(Boolean);
+        const filtered = configuredValues.map((value) => makeOptionItemFromValue(groupName, value)).filter(Boolean);
+        const baseItems = filtered.length ? filtered : getDefaultOptionItems(groupName);
+        const filteredValues =
+            optionFilters &&
+            Array.isArray(optionFilters[groupName]) &&
+            optionFilters[groupName].length
+                ? optionFilters[groupName]
+                : null;
 
-        return filtered.length ? filtered : getDefaultOptionItems(groupName);
+        if (!filteredValues) {
+            return baseItems;
+        }
+
+        const allowedMap = {};
+        baseItems.forEach((item) => {
+            allowedMap[item.value] = item;
+        });
+
+        const limitedItems = filteredValues
+            .map((value) => makeOptionItemFromValue(groupName, value))
+            .filter((item) => item && allowedMap[item.value])
+            .map((item) => allowedMap[item.value]);
+
+        return limitedItems.length ? limitedItems : baseItems;
     }
 
     function getHeroineModelEntry(modelConfig, heroineId) {
@@ -1080,9 +1128,10 @@
             nextState.camera = Object.assign({}, nextState.camera, defaultCamera);
         }
 
-        const poseOptions = getHeroineOptionList(modelConfig, heroineId, "poses");
-        const expressionOptions = getHeroineOptionList(modelConfig, heroineId, "expressions");
-        const lookOptions = getHeroineOptionList(modelConfig, heroineId, "looks");
+        const optionFilters = options.optionFilters || null;
+        const poseOptions = getHeroineOptionList(modelConfig, heroineId, "poses", optionFilters);
+        const expressionOptions = getHeroineOptionList(modelConfig, heroineId, "expressions", optionFilters);
+        const lookOptions = getHeroineOptionList(modelConfig, heroineId, "looks", optionFilters);
 
         if (!poseOptions.some((item) => item.value === nextState.poseId) && poseOptions[0]) {
             nextState.poseId = poseOptions[0].value;
@@ -1150,7 +1199,10 @@
 
         return `
             <button class="stone-photo-mvp__album-item${isActive ? " is-active" : ""}" data-capture-id="${escapeHtml(entry.captureId)}" type="button">
-                <img src="" alt="album thumbnail" />
+                <span class="stone-photo-mvp__album-thumb">
+                    <img src="" alt="album thumbnail" />
+                    <span class="stone-photo-mvp__album-thumb-missing">画像なし</span>
+                </span>
                 <div class="stone-photo-mvp__album-item-meta">
                     <strong>${escapeHtml(heroineLabel)}</strong>
                     <span>${escapeHtml(timestamp)}</span>
@@ -1159,19 +1211,21 @@
         `;
     }
 
-    function buildAlbumCaptionMarkup(entry, modelConfig) {
+    function buildAlbumCaptionMarkup(entry, modelConfig, options) {
         if (!entry) {
             return `<div class="stone-photo-mvp__album-caption-empty">写真を選ぶと、ここに基本情報が表示されます。</div>`;
         }
 
+        const stateLabel = entry.stoneState ? getStoneStateLabel(entry.stoneState) : "";
         const heroineLabel = getHeroineLabel(modelConfig, entry.heroineId);
         const timestamp = formatTimestamp(entry.createdAt);
-        const stateLabel = getStoneStateLabel(entry.stoneState);
+        const missingAsset = options && options.missingAsset;
 
         return `
             <strong>${escapeHtml(heroineLabel)}</strong>
             <span>${escapeHtml(timestamp)}</span>
-            <span>${escapeHtml(stateLabel)}</span>
+            ${stateLabel ? `<span>${escapeHtml(stateLabel)}</span>` : ""}
+            ${missingAsset ? `<span class="stone-photo-mvp__album-caption-warning">画像データなし</span>` : ""}
         `;
     }
 
@@ -1470,41 +1524,80 @@
         });
     }
 
-    function getGameBackgroundCaptureTarget() {
+    function getGameBackgroundCaptureTargets() {
         const selectors = [
+            "#tyrano_base .base_back",
+            "#tyrano_base .layer_camera",
             "#tyrano_base .base_fore",
             "#tyrano_base #root_layer_game",
             "#tyrano_base",
         ];
+        const targets = [];
 
         for (const selector of selectors) {
             const el = document.querySelector(selector);
             if (el && el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().height > 0) {
-                return el;
+                targets.push(el);
+            }
+        }
+
+        return targets;
+    }
+
+    function canvasHasVisiblePixels(canvas) {
+        if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+            return false;
+        }
+
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) {
+            return false;
+        }
+
+        const width = canvas.width;
+        const height = canvas.height;
+        const sampleStep = Math.max(1, Math.floor(Math.sqrt((width * height) / 1800)));
+        let sampled = 0;
+        let visible = 0;
+
+        try {
+            const imageData = context.getImageData(0, 0, width, height).data;
+            for (let y = Math.floor(sampleStep / 2); y < height; y += sampleStep) {
+                for (let x = Math.floor(sampleStep / 2); x < width; x += sampleStep) {
+                    const index = (y * width + x) * 4;
+                    sampled += 1;
+                    if (imageData[index + 3] > 8) {
+                        visible += 1;
+                    }
+                }
+            }
+        } catch (_error) {
+            return true;
+        }
+
+        return sampled > 0 && visible / sampled > 0.02;
+    }
+
+    async function captureGameBackgroundCanvas(scale) {
+        const captureTargets = getGameBackgroundCaptureTargets();
+        if (!captureTargets.length || typeof window.html2canvas !== "function") {
+            return null;
+        }
+
+        for (const captureTarget of captureTargets) {
+            const bgCanvas = await window.html2canvas(captureTarget, {
+                backgroundColor: null,
+                logging: false,
+                scale,
+                useCORS: true,
+            });
+
+            if (bgCanvas && bgCanvas.width > 0 && bgCanvas.height > 0 && canvasHasVisiblePixels(bgCanvas)) {
+                return bgCanvas;
             }
         }
 
         return null;
-    }
-
-    async function captureGameBackgroundCanvas(scale) {
-        const captureTarget = getGameBackgroundCaptureTarget();
-        if (!captureTarget || typeof window.html2canvas !== "function") {
-            return null;
-        }
-
-        const bgCanvas = await window.html2canvas(captureTarget, {
-            backgroundColor: null,
-            logging: false,
-            scale,
-            useCORS: true,
-        });
-
-        if (!bgCanvas || bgCanvas.width <= 0 || bgCanvas.height <= 0) {
-            return null;
-        }
-
-        return bgCanvas;
     }
 
     async function captureViewportImage(viewportElement) {
@@ -1836,12 +1929,19 @@
             return ensureRuntimeCanvasAttached();
         }
 
-        function purgePluginModelRegistration(modelId) {
+        function purgePluginModelRegistration(modelId, expectedVersion) {
             if (!hasPluginSupport() || !modelId) {
                 return;
             }
 
             const runtimeModel = window.VRoid.three.model ? window.VRoid.three.model[modelId] : null;
+            if (
+                expectedVersion != null &&
+                (!runtimeModel || runtimeModel.stonePhotoModelVersion !== expectedVersion)
+            ) {
+                return;
+            }
+
             if (runtimeModel) {
                 try {
                     ["tickID", "poseRequestId", "requestEmoId", "moveTickID", "resetHipsTickID", "requestlookAtId"].forEach((key) => {
@@ -1867,9 +1967,9 @@
             }
         }
 
-        function purgePluginModelRegistrations() {
-            purgePluginModelRegistration(state.normalModelId);
-            purgePluginModelRegistration(state.stoneModelId);
+        function purgePluginModelRegistrations(expectedVersion) {
+            purgePluginModelRegistration(state.normalModelId, expectedVersion);
+            purgePluginModelRegistration(state.stoneModelId, expectedVersion);
         }
 
         function disposeLayer() {
@@ -2063,7 +2163,7 @@
             });
         }
 
-        function loadPluginModel(modelId, storageName) {
+        function loadPluginModel(modelId, storageName, modelVersion) {
             return new Promise((resolve) => {
                 window.VRoid.three.load(
                     modelId,
@@ -2073,6 +2173,7 @@
                         if (runtimeModel) {
                             delete runtimeModel.stonePhotoFramingMetrics;
                             delete runtimeModel.stonePhotoMaterialsTuned;
+                            runtimeModel.stonePhotoModelVersion = modelVersion;
                         }
                         resolve();
                     },
@@ -2827,6 +2928,10 @@
             async onOpen(sessionState, root, context = {}) {
                 const isCurrentRequest =
                     context && typeof context.isCurrent === "function" ? context.isCurrent : () => true;
+                const loadedModelIds = [];
+                const cleanupCancelledLoad = () => {
+                    loadedModelIds.forEach((modelId) => purgePluginModelRegistration(modelId, requestModelVersion));
+                };
                 state.host = root.find(".stone-photo-mvp__render-host").get(0);
                 state.loading = true;
                 state.loadError = "";
@@ -2835,6 +2940,7 @@
                 state.stoneModelReady = false;
                 state.stonePluginStorage = "";
                 state.modelVersion += 1;
+                const requestModelVersion = state.modelVersion;
                 onUpdate();
 
                 if (!hasPluginSupport()) {
@@ -2873,13 +2979,17 @@
                     }
                     ensurePluginLayer(width, height);
                     purgePluginModelRegistrations();
-                    await loadPluginModel(state.normalModelId, state.normalPluginStorage);
+                    await loadPluginModel(state.normalModelId, state.normalPluginStorage, requestModelVersion);
+                    loadedModelIds.push(state.normalModelId);
                     if (!isCurrentRequest()) {
+                        cleanupCancelledLoad();
                         return;
                     }
                     addPluginModel(state.normalModelId, true, sessionState.heroineId);
-                    await loadPluginModel(state.stoneModelId, state.stonePluginStorage);
+                    await loadPluginModel(state.stoneModelId, state.stonePluginStorage, requestModelVersion);
+                    loadedModelIds.push(state.stoneModelId);
                     if (!isCurrentRequest()) {
+                        cleanupCancelledLoad();
                         return;
                     }
                     addPluginModel(state.stoneModelId, false, sessionState.heroineId);
@@ -2894,15 +3004,18 @@
 
                     ensureCustomEmotionPresets();
                     if (!isCurrentRequest()) {
+                        cleanupCancelledLoad();
                         return;
                     }
                     this.applyState(sessionState);
                     if (!isCurrentRequest()) {
+                        cleanupCancelledLoad();
                         return;
                     }
                     state.ready = true;
                 } catch (error) {
                     if (!isCurrentRequest()) {
+                        cleanupCancelledLoad();
                         return;
                     }
                     console.error(error);
@@ -3256,6 +3369,8 @@
         modelConfigLoadWarning: "",
         runtimeStatusMessage: "",
         runtimeStatusTone: "",
+        runtimeRestoreEventPending: false,
+        runtimeRestoreFallbackDispatched: false,
         tyranoUiState: null,
         assetUrlCache: {
             image: new Map(),
@@ -3473,6 +3588,16 @@
             return Boolean(this.adapter && typeof this.adapter.isLoading === "function" && this.adapter.isLoading());
         },
 
+        canCaptureShot() {
+            if (this.mode !== "shoot" || this.isCapturing || this.awaitingContextRestore || this.isAdapterLoading()) {
+                return false;
+            }
+            if (this.adapter && this.adapter.isAvailable && !this.adapter.isAvailable()) {
+                return false;
+            }
+            return Boolean(this.adapter);
+        },
+
         getLoadingOverlayText() {
             if (this.awaitingContextRestore) {
                 return this.runtimeStatusMessage || "表示を復旧しています。しばらくお待ちください。";
@@ -3498,6 +3623,28 @@
             this.tyranoUiState = null;
         },
 
+        dispatchRuntimeRestoreCompleteFallback() {
+            if (
+                !this.runtimeRestoreEventPending ||
+                this.runtimeRestoreFallbackDispatched ||
+                !window ||
+                typeof window.dispatchEvent !== "function" ||
+                !window.CustomEvent
+            ) {
+                return;
+            }
+            this.runtimeRestoreFallbackDispatched = true;
+            window.setTimeout(() => {
+                window.dispatchEvent(
+                    new CustomEvent("vroid:restore-complete", {
+                        detail: {
+                            source: "StonePhotoMvpAdapterRecovery",
+                        },
+                    })
+                );
+            }, 0);
+        },
+
         applyProfileDefaultsIfNeeded() {
             if (this.profileDefaultsApplied) {
                 return;
@@ -3520,7 +3667,10 @@
                 this.state,
                 modelConfig,
                 this.state.heroineId,
-                this.explicitStateOverrides
+                this.explicitStateOverrides,
+                {
+                    optionFilters: this.optionFilters,
+                }
             );
             this.profileDefaultsApplied = true;
         },
@@ -3534,7 +3684,7 @@
         getTrayItems(trayName) {
             const modelConfig = this.getActiveModelConfig();
             const heroineId = this.state.heroineId;
-            return getHeroineOptionList(modelConfig, heroineId, trayName);
+            return getHeroineOptionList(modelConfig, heroineId, trayName, this.optionFilters);
         },
 
         getTrayFieldName(trayName) {
@@ -3608,7 +3758,7 @@
         },
 
         randomizePoseAndExpression() {
-            if (this.state.stoneState === "stone") {
+            if (this.isCapturing || this.state.stoneState === "stone") {
                 return;
             }
 
@@ -3664,6 +3814,7 @@
         },
 
         openTray(trayName) {
+            if (this.isCapturing) return;
             if (this.state.stoneState === "stone") return;
             if (this.activeTray === trayName) {
                 this.closeTray();
@@ -3732,6 +3883,7 @@
             // --- Main actions ---
             root.on("click", '[data-action="back"]', () => this.cancel());
             root.on("click", '[data-action="toggle-stone"]', () => {
+                if (this.isCapturing) return;
                 this.markHelpAsSeen();
                 this.state.stoneState = this.state.stoneState === "stone" ? "normal" : "stone";
                 this.closeTray();
@@ -3741,6 +3893,7 @@
             root.on("click", '[data-action="retake"]', () => this.closePreview());
             root.on("click", '[data-action="commit"]', () => this.commit());
             root.on("click", '[data-action="reset"]', () => {
+                if (this.isCapturing) return;
                 this.markHelpAsSeen();
                 if (this.state.stoneState === "stone") {
                     this.resetCamera();
@@ -3771,6 +3924,7 @@
 
             // --- UI toggle ---
             root.on("click", '[data-action="toggle-ui"]', () => {
+                if (this.isCapturing) return;
                 this.markHelpAsSeen();
                 this.hudPinnedHidden = !this.hudPinnedHidden;
                 this.syncHudVisibility();
@@ -4002,6 +4156,11 @@
             this.state.heroineId = params.heroine || this.getActiveModelConfig().defaultHeroineId || DEFAULT_STATE.heroineId;
             this.state.locationId = params.location || DEFAULT_STATE.locationId;
             this.state.themeId = params.theme || DEFAULT_STATE.themeId;
+            this.optionFilters = {
+                poses: parseOptionFilterParam(params.pose_ids),
+                expressions: parseOptionFilterParam(params.expression_ids),
+                looks: parseOptionFilterParam(params.look_ids),
+            };
             this.explicitStateOverrides = {
                 heroineId: Boolean(params.heroine),
                 locationId: Boolean(params.location),
@@ -4032,7 +4191,10 @@
                     modelConfig || this.getActiveModelConfig(),
                     this.state.heroineId,
                     this.explicitStateOverrides,
-                    { includeCamera: true }
+                    {
+                        includeCamera: true,
+                        optionFilters: this.optionFilters,
+                    }
                 );
                 this.profileDefaultsApplied = true;
                 this.profileFramingApplied = !ENABLE_AUTO_CAMERA_FRAMING;
@@ -4043,6 +4205,7 @@
                 this.startRuntimeHealthCheck();
                 this.scheduleAdapterRetry();
                 this.scheduleHelpHintFade();
+                this.adapterRecoveryInFlight = true;
                 this.render();
                 Promise.resolve(this.adapter.onOpen(this.state, this.root, openContext))
                     .then(() => {
@@ -4057,6 +4220,11 @@
                         }
                         console.error(error);
                         this.render();
+                    })
+                    .finally(() => {
+                        if (this.adapterOpenToken === openContext.requestToken) {
+                            this.adapterRecoveryInFlight = false;
+                        }
                     });
             };
             if (this.modelConfig) {
@@ -4122,7 +4290,10 @@
                     locationId: true,
                     themeId: true,
                 },
-                { includeCamera: true }
+                {
+                    includeCamera: true,
+                    optionFilters: this.optionFilters,
+                }
             );
             this.profileDefaultsApplied = true;
             this.profileFramingApplied = !ENABLE_AUTO_CAMERA_FRAMING;
@@ -4139,7 +4310,10 @@
                     locationId: true,
                     themeId: true,
                 },
-                { includeCamera: true }
+                {
+                    includeCamera: true,
+                    optionFilters: this.optionFilters,
+                }
             );
             const refinedCamera =
                 ENABLE_AUTO_CAMERA_FRAMING &&
@@ -4185,6 +4359,8 @@
                     this.awaitingContextRestore = true;
                     this.runtimeStatusMessage = "表示を復旧しています。しばらくお待ちください。";
                     this.runtimeStatusTone = "warning";
+                    this.runtimeRestoreEventPending = true;
+                    this.runtimeRestoreFallbackDispatched = false;
                     this.scheduleAdapterRetry();
                     this.render();
                 },
@@ -4192,19 +4368,40 @@
                     this.awaitingContextRestore = true;
                     this.runtimeStatusMessage = "表示を復旧しています。しばらくお待ちください。";
                     this.runtimeStatusTone = "warning";
+                    this.runtimeRestoreEventPending = true;
+                    this.runtimeRestoreFallbackDispatched = false;
                     this.scheduleAdapterRetry();
                     this.render();
                 },
                 onRestoreComplete: () => {
+                    this.runtimeRestoreEventPending = false;
+                    this.runtimeRestoreFallbackDispatched = false;
                     this.awaitingContextRestore = true;
                     this.runtimeStatusMessage = "";
                     this.runtimeStatusTone = "";
+                    const host = this.root ? this.root.find(".stone-photo-mvp__render-host").get(0) : null;
+                    const canvas = document.getElementById("StonePhotoLayer");
+                    if (
+                        this.mode === "shoot" &&
+                        this.adapter &&
+                        this.adapter.isAvailable &&
+                        this.adapter.isAvailable() &&
+                        host &&
+                        canvas &&
+                        host.contains(canvas)
+                    ) {
+                        this.awaitingContextRestore = false;
+                        this.render();
+                        return;
+                    }
                     if (!this.tryUpgradeAdapter(true)) {
                         this.scheduleAdapterRetry();
                     }
                     this.render();
                 },
                 onRestoreFailed: () => {
+                    this.runtimeRestoreEventPending = false;
+                    this.runtimeRestoreFallbackDispatched = false;
                     this.awaitingContextRestore = true;
                     this.runtimeStatusMessage =
                         "表示の復旧に失敗しました。BACKで閉じて開き直してください。";
@@ -4292,7 +4489,10 @@
             }
 
             const nextAdapter = ensureAdapter(() => this.render());
-            if (!nextAdapter || !nextAdapter.isAvailable || (!forceReload && !nextAdapter.isAvailable())) {
+            const nextAdapterMode = nextAdapter && typeof nextAdapter.getMode === "function"
+                ? nextAdapter.getMode()
+                : "";
+            if (!nextAdapter || nextAdapterMode === "unavailable") {
                 return false;
             }
 
@@ -4318,6 +4518,14 @@
                         this.awaitingContextRestore = false;
                         this.runtimeStatusMessage = "";
                         this.runtimeStatusTone = "";
+                        if (
+                            this.runtimeRestoreEventPending &&
+                            window.VRoid &&
+                            window.VRoid.three &&
+                            !window.VRoid.three.isRestoringContext
+                        ) {
+                            this.dispatchRuntimeRestoreCompleteFallback();
+                        }
                         this.render();
                         if (window.VRoid && window.VRoid.three && window.VRoid.three.forceRenderUpdate) {
                             window.VRoid.three.forceRenderUpdate("StonePhotoLayer");
@@ -4336,7 +4544,9 @@
                     this.scheduleAdapterRetry();
                 })
                 .finally(() => {
-                    this.adapterRecoveryInFlight = false;
+                    if (this.adapterOpenToken === recoveryContext.requestToken) {
+                        this.adapterRecoveryInFlight = false;
+                    }
                 });
             return true;
         },
@@ -4439,13 +4649,14 @@
             const randomButton = this.root.find('[data-action="randomize-style"]');
             const stoneBtn = this.root.find(".stone-photo-mvp__btn-stone");
             stoneBtn.text(isStone ? "元に戻す" : "石化する").toggleClass("is-stone", isStone);
-            randomButton.prop("disabled", isStone);
+            randomButton.prop("disabled", this.isCapturing || isStone);
+            stoneBtn.prop("disabled", this.isCapturing);
 
             // Sub-actions (POSE/FACE/LOOK) visibility
             this.root.find(".stone-photo-mvp__hud-sub")
                 .toggleClass("is-hidden-by-stone", isStone)
                 .find(".stone-photo-mvp__btn")
-                .prop("disabled", isStone);
+                .prop("disabled", this.isCapturing || isStone);
             if (isStone && this.activeTray) {
                 this.closeTray();
             }
@@ -4456,14 +4667,20 @@
             // Disabled states
             const shutterButton = this.root.find('[data-action="shutter"]');
             const commitButton = this.root.find('[data-action="commit"]');
+            const retakeButton = this.root.find('[data-action="retake"]');
             const exportButton = this.root.find('[data-action="export-album-item"]');
             const deleteButton = this.root.find('[data-action="delete-album-item"]');
             const bulkExportButton = this.root.find('[data-action="export-filtered-album"]');
-            shutterButton.prop("disabled", this.isCapturing);
+            const passiveButtons = this.root.find(
+                '[data-action="back"], [data-action="reset"], [data-action="open-album"], [data-action="close-album"], [data-action="toggle-ui"]'
+            );
+            shutterButton.prop("disabled", !this.canCaptureShot());
             commitButton.prop("disabled", this.isCapturing);
+            retakeButton.prop("disabled", this.isCapturing);
             exportButton.prop("disabled", this.isCapturing);
             deleteButton.prop("disabled", this.isCapturing);
             bulkExportButton.prop("disabled", this.isCapturing);
+            passiveButtons.prop("disabled", this.isCapturing);
 
             if (
                 this.mode !== "album" &&
@@ -4606,7 +4823,11 @@
                     if (renderToken !== this.albumRenderToken) {
                         return;
                     }
-                    list.find(`.stone-photo-mvp__album-item[data-capture-id="${entry.captureId}"] img`).attr("src", thumbnailUrl || "");
+                    const albumItem = list.find(`.stone-photo-mvp__album-item[data-capture-id="${entry.captureId}"]`);
+                    albumItem
+                        .toggleClass("is-missing-asset", !thumbnailUrl)
+                        .find("img")
+                        .attr("src", thumbnailUrl || "");
                 })
             );
 
@@ -4615,17 +4836,32 @@
                 return;
             }
 
+            if (!detailUrl) {
+                detailImage.addClass("hidden").attr("src", "");
+                emptyState.removeClass("hidden").text("画像データが見つかりません。不要なら削除してください。");
+                exportButton.prop("disabled", true);
+                deleteButton.prop("disabled", this.isCapturing);
+                albumCaption.html(buildAlbumCaptionMarkup(selected, modelConfig, { missingAsset: true }));
+                return;
+            }
+
             emptyState.addClass("hidden");
-            detailImage.removeClass("hidden").attr("src", detailUrl || "");
+            detailImage.removeClass("hidden").attr("src", detailUrl);
             albumCaption.html(buildAlbumCaptionMarkup(selected, modelConfig));
         },
 
         selectAlbumEntry(captureId) {
+            if (this.isCapturing) {
+                return;
+            }
             this.albumSelectionId = captureId;
             this.renderAlbum();
         },
 
         openAlbumPanel() {
+            if (this.isCapturing) {
+                return;
+            }
             this.ensureModelConfig();
             this.albumEntries = getAlbumEntries();
             this.albumSelectionId = this.albumEntries[0] ? this.albumEntries[0].captureId : "";
@@ -4634,6 +4870,9 @@
         },
 
         closeAlbumPanel() {
+            if (this.isCapturing) {
+                return;
+            }
             this.invalidateAlbumRender();
             this.revokeAlbumAssetCache();
             this.root.find(".stone-photo-mvp__album").addClass("hidden");
@@ -4643,6 +4882,9 @@
         },
 
         async deleteSelectedAlbumItem() {
+            if (this.isCapturing) {
+                return;
+            }
             const selected = this.getSelectedAlbumEntry();
             if (!selected) {
                 return;
@@ -4657,7 +4899,9 @@
             this.render();
 
             try {
-                await deleteCaptureFromDatabase(selected.captureId);
+                await deleteCaptureFromDatabase(selected.captureId).catch((error) => {
+                    console.warn("StonePhotoMvp album image delete failed; removing metadata entry only.", error);
+                });
                 const nextEntries = removeAlbumEntry(selected.captureId);
                 if (this.assetUrlCache.image.has(selected.captureId)) {
                     revokeObjectUrl(this.assetUrlCache.image.get(selected.captureId));
@@ -4771,7 +5015,7 @@
         },
 
         async openPreview() {
-            if (this.isCapturing) return;
+            if (!this.canCaptureShot()) return;
 
             this.revokePreviewAssets();
             this.isCapturing = true;
@@ -4819,6 +5063,9 @@
         },
 
         closePreview() {
+            if (this.isCapturing) {
+                return;
+            }
             this.root.find(".stone-photo-mvp__preview").addClass("hidden");
             this.root.find(".stone-photo-mvp__preview-image").attr("src", "");
             this.revokePreviewAssets();
@@ -4826,30 +5073,38 @@
         },
 
         async commit() {
+            if (this.isCapturing) return;
             if (!this.previewResult) return;
             if (!this.previewCaptureAssets) {
                 window.alert("保存用の画像データが見つかりません。もう一度撮影してください。");
                 return;
             }
 
+            const previewResult = deepClone(this.previewResult);
+            const previewCaptureAssets = this.previewCaptureAssets;
+            const resultVar = this.session && this.session.resultVar;
+
             this.isCapturing = true;
             this.render();
 
             try {
                 await saveCaptureToDatabase({
-                    captureId: this.previewResult.captureId,
-                    createdAt: this.previewResult.createdAt,
-                    imageBlob: this.previewCaptureAssets.imageBlob,
-                    thumbnailBlob: this.previewCaptureAssets.thumbnailBlob,
-                    imageType: this.previewCaptureAssets.imageType,
-                    thumbnailType: this.previewCaptureAssets.thumbnailType,
-                    captureSize: this.previewResult.captureSize,
+                    captureId: previewResult.captureId,
+                    createdAt: previewResult.createdAt,
+                    imageBlob: previewCaptureAssets.imageBlob,
+                    thumbnailBlob: previewCaptureAssets.thumbnailBlob,
+                    imageType: previewCaptureAssets.imageType,
+                    thumbnailType: previewCaptureAssets.thumbnailType,
+                    captureSize: previewResult.captureSize,
                 });
 
                 const albumEntry = {
-                    captureId: this.previewResult.captureId,
-                    heroineId: this.previewResult.heroineId,
-                    createdAt: this.previewResult.createdAt,
+                    captureId: previewResult.captureId,
+                    createdAt: previewResult.createdAt,
+                    heroineId: previewResult.heroineId,
+                    locationId: previewResult.locationId,
+                    stoneState: previewResult.stoneState,
+                    themeId: previewResult.themeId,
                 };
 
                 const resultPayload = makeResultPayload("committed", albumEntry);
@@ -4861,7 +5116,7 @@
                         )
                     );
                 }
-                setVariable(this.session.resultVar, resultPayload);
+                setVariable(resultVar, resultPayload);
             } catch (error) {
                 console.error(error);
                 window.alert("撮影画像の保存に失敗しました");
@@ -4874,6 +5129,9 @@
         },
 
         cancel() {
+            if (this.isCapturing) {
+                return;
+            }
             if (this.session && this.session.resultVar) {
                 setVariable(this.session.resultVar, makeResultPayload("cancelled"));
             }
@@ -4943,6 +5201,9 @@
                     heroine: "",
                     location: "",
                     theme: "",
+                    pose_ids: "",
+                    expression_ids: "",
+                    look_ids: "",
                     result: "f.stone_photo_result",
                     commit_target: "",
                     commit_storage: "",
